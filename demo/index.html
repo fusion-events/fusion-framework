@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="../src/fusion.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			f$.bind( {
+				parentSelector: document,
+				selector:	'button',
+				priority:	1,
+				data		{ sample: 'data' }
+				handler:	test 
+			} );
+	
+			function test( event ) { 
+				alert( test );
+			}
+		</script>
+		<button>Click Me!</button>
+	</body>
+</html>
