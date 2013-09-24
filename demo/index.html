@@ -2,18 +2,21 @@
 <html>
 	<head>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-		<script type="text/javascript" src="../src/fusion.core.js"></script>
+		<script type="text/javascript" src="../fusion.min.js"></script>
+		<!--script type="text/javascript" src="../src/core/fusion.js"></script>
+		<script type="text/javascript" src="../src/event/document_event.js"></script-->
 	</head>
 	<body>
 		<script type="text/javascript">
-            $f.fuse( 'DOCUMENT_LOAD', function() {
-                alert( 'test!' );
+            $f.fuse( 'DOCUMENT_LOAD', function( event ) {
+	            event.getData( 'window' ).location.href += "#test";
+	            return false;
             }, 10 );
-            $f.fuse( 'DOCUMENT_LOAD', function() {
-                alert( 'higher priority test!' );
+            $f.fuse( 'DOCUMENT_LOAD', function( event ) {
+	            event.getData( 'window' ).location.href += "#lowertest";
             }, 50 );
-            $f.fuse( 'DOCUMENT_LOAD', function() {
-                alert( 'lower priority test!' );
+            $f.fuse( 'DOCUMENT_LOAD', function( event ) {
+	            event.getData( 'window' ).location.href += "#highesttest";
             }, 5 );
 		</script>
 		<button>Click Me!</button>
