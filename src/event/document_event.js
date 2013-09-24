@@ -1,7 +1,7 @@
 /**
- * @author Aaron Scherer <aequasi@gmail.com>
- * @date 9/24/13
- * @copyright Aaron Scherer 2013
+ * Document Events
+ *
+ * Copyright 2013 by Aaron Scherer <aequasi@gmail.com>
  */
 ( function( fusion ) {
 
