@@ -305,13 +305,19 @@
 	$.fn.fusion = fusion;
 	window.$f = ( window.$f === undefined ) ? $.fn.fusion : window.$f;
 
+}( jQuery ) );
+
+/**
+ * On Ready Functions
+ */
+( function( fusion ) {
 	$( function() {
 		fusion.ignite( 'DOCUMENT_LOAD', { window: window, cheese: 'cheese' } );
 		$( document ).unload( function() {
 			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window } );
 		} )
 	} );
-}( jQuery ) );
+} )( $.fn.fusion );
 
 /**
  * @author Aaron Scherer <aequasi@gmail.com>
