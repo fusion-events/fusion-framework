@@ -3,6 +3,8 @@ fusion-framework
 
 The Fusion Javascript Event Framework
 
+Version: 1.0.0
+
 
 DISCLAIMER
 ==========
