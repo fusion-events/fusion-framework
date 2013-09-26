@@ -299,7 +299,7 @@
 				throw new Error( eventName + " is not a valid event class." );
 			}
 
-			if( false === events[ i ].handler( eventClass ) ) {
+			if( false === events[ i ].handler( eventClass, context ) ) {
 				return false;
 			}
 		}
