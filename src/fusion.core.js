@@ -283,7 +283,7 @@
 	 * @param eventName
 	 * @param event
 	 */
-	fusion.ignite = function( eventName, event ) {
+	fusion.ignite = function( eventName, event, context ) {
 		var events = fusion.fused.all( eventName ), eventClass, i;
 		for( i in events ) {
 			if( !fusion.events.has( eventName ) ) {
@@ -293,6 +293,7 @@
 			eventClass = fusion.events.get( eventName );
 
 			eventClass.initialize( event );
+			eventClass.context = context || eventClass;
 
 			if( !eventClass.isValidEvent ) {
 				throw new Error( eventName + " is not a valid event class." );

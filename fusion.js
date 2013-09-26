@@ -253,6 +253,7 @@
 
 		fusion.fused.add( eventName, handler, priority );
 	};
+	fusion.bind = fusion.fuse;
 
 	/**
 	 * Unbinds the event
@@ -273,6 +274,7 @@
 
 		fusion.fused.remove( eventName, handler, priority );
 	};
+	fusion.unbind = fusion.defuse;
 
 	/**
 	 *
@@ -281,7 +283,7 @@
 	 * @param eventName
 	 * @param event
 	 */
-	fusion.ignite = function( eventName, event ) {
+	fusion.ignite = function( eventName, event, context ) {
 		var events = fusion.fused.all( eventName ), eventClass, i;
 		for( i in events ) {
 			if( !fusion.events.has( eventName ) ) {
@@ -291,6 +293,7 @@
 			eventClass = fusion.events.get( eventName );
 
 			eventClass.initialize( event );
+			eventClass.context = context || eventClass;
 
 			if( !eventClass.isValidEvent ) {
 				throw new Error( eventName + " is not a valid event class." );
@@ -303,6 +306,7 @@
 
 		return true;
 	};
+	fusion.trigger = fusion.ignite;
 
 	$.fn.fusion = fusion;
 	window.$f = ( window.$f === undefined ) ? $.fn.fusion : window.$f;
@@ -314,7 +318,7 @@
  */
 ( function( fusion ) {
 	$( function() {
-		fusion.ignite( 'DOCUMENT_LOAD', { window: window, cheese: 'cheese' } );
+		fusion.ignite( 'DOCUMENT_LOAD', { window: window } );
 		$( document ).unload( function() {
 			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window } );
 		} )
