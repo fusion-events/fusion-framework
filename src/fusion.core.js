@@ -253,6 +253,7 @@
 
 		fusion.fused.add( eventName, handler, priority );
 	};
+	fusion.bind = fusion.fuse;
 
 	/**
 	 * Unbinds the event
@@ -273,6 +274,7 @@
 
 		fusion.fused.remove( eventName, handler, priority );
 	};
+	fusion.unbind = fusion.defuse;
 
 	/**
 	 *
@@ -303,6 +305,7 @@
 
 		return true;
 	};
+	fusion.trigger = fusion.ignite;
 
 	$.fn.fusion = fusion;
 	window.$f = ( window.$f === undefined ) ? $.fn.fusion : window.$f;
@@ -314,7 +317,7 @@
  */
 ( function( fusion ) {
 	$( function() {
-		fusion.ignite( 'DOCUMENT_LOAD', { window: window, cheese: 'cheese' } );
+		fusion.ignite( 'DOCUMENT_LOAD', { window: window } );
 		$( document ).unload( function() {
 			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window } );
 		} )

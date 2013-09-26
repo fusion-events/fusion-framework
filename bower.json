@@ -1,0 +1,27 @@
+{
+  "name": "fusion-framework",
+  "version": "1.0.0",
+  "homepage": "https://github.com/fusion-events/fusion-framework",
+  "authors": [
+    "Aaron Scherer <aequasi@gmail.com>"
+  ],
+  "description": "jQuery Prioritized Event Frameowrk",
+  "main": "fusion.min.js",
+  "keywords": [
+    "jquery",
+    "events",
+    "priority"
+  ],
+  "license": "Apache2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "compiler"
+  ],
+  "dependencies": {
+    "jquery": "2.0.0"
+  }
+}
