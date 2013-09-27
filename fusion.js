@@ -17,7 +17,7 @@
 		 * @param staticProps
 		 * @returns {jQuery.extend|*}
 		 */
-		inherits = function( parent, protoProps, staticProps ) {
+			inherits = function( parent, protoProps, staticProps ) {
 			var child;
 			if( protoProps && protoProps.hasOwnProperty( 'constructor' ) ) {
 				child = protoProps.constructor;
@@ -35,17 +35,17 @@
 			if( staticProps ) {
 				child = $.extend( true, {}, child, staticProps );
 			}
-				child.prototype.constructor = child;
-				child.__super__ = parent.prototype;
-				return child;
+			child.prototype.constructor = child;
+			child.__super__ = parent.prototype;
+			return child;
 		},
 		/**
-	 *
-	 * @param protoProps
-	 * @param staticProps
-	 * @returns {jQuery.extend|*}
-	 */
-		extendThis = function( protoProps, staticProps ) {
+		 *
+		 * @param protoProps
+		 * @param staticProps
+		 * @returns {jQuery.extend|*}
+		 */
+			extendThis = function( protoProps, staticProps ) {
 			var child = inherits( this, protoProps, staticProps );
 			child.extend = extendThis;
 			return child;
@@ -67,11 +67,23 @@
 				this.data[ arg ] = arguments[ 0 ][ arg ];
 			}
 
+			this.name = null
 			this.isValidEvent = true;
+			this.propagationStopped = false;
 
 		};
 
 		fusion.event = new ctor();
+
+		fusion.event.__proto__.stopPropagation = function() {
+			this.propagationStopped = true;
+
+			return false;
+		};
+
+		fusion.event.__proto__.isPropagationStopped = function() {
+			return this.propagationStopped;
+		}
 
 		fusion.event.__proto__.initialize = function() {
 			for( var arg in arguments[ 0 ] ) {
@@ -105,7 +117,7 @@
 		 * @param priority
 		 * @returns {fusion.fused}
 		 */
-		fusion.fused.__proto__.add = function( eventName, handler, priority ) {
+		fusion.fused.__proto__.add = function( eventName, handler, priority, context ) {
 			if( eventName === undefined ) {
 				throw Error( "eventName must be defined." );
 			}
@@ -115,11 +127,15 @@
 			if( priority === undefined ) {
 				throw Error( "priority must be defined." );
 			}
+			if( context === undefined ) {
+				throw Error( "context must be defined." );
+			}
 
 			this.collection.push( {
 				                      name:     eventName,
 				                      priority: priority,
-				                      handler:  handler
+				                      handler:  handler,
+				                      context:  context
 			                      } );
 
 			return this;
@@ -132,7 +148,7 @@
 		 * @param [priority]
 		 * @returns {boolean}
 		 */
-		fusion.fused.__proto__.remove = function( eventName, handler, priority ) {
+		fusion.fused.__proto__.remove = function( eventName, handler, priority, context ) {
 			/**
 			 * @type {Array}
 			 */
@@ -150,7 +166,11 @@
 					if( priority != event.priority ) {
 						continue;
 					}
-					removed.push( this.collection.splice( i, 1 ) );
+					if( context === undefined ) {
+						removed.push( this.collection.splice( i, 1 ) );
+					} else if( context == event.context ) {
+						removed.push( this.collection.splice( i, 1 ) );
+					}
 				}
 			}
 
@@ -206,6 +226,7 @@
 				throw Error( "Event with name '" + eventName + "' already exists!" );
 			}
 			eventClass = undefined === eventClass ? {} : eventClass;
+			eventClass.eventName = eventName;
 
 			this.collection[ eventName ] = eventClass;
 
@@ -242,16 +263,19 @@
 	 * @param handler code to execute
 	 * @param [priority] int Priority to run
 	 */
-	fusion.fuse = function( eventName, handler, priority ) {
+	fusion.fuse = function( eventName, handler, priority, context ) {
 		if( fusion.events.get( eventName ) === undefined ) {
-			throw Error( "Fused event does not exist." );
+			throw Error( "Fused event '" + eventName + "' does not exist." );
 		}
 
 		if( priority === null || priority === undefined ) {
 			priority = 50;
 		}
+		if( context === undefined ) {
+			context = handler;
+		}
 
-		fusion.fused.add( eventName, handler, priority );
+		fusion.fused.add( eventName, handler, priority, context );
 	};
 	fusion.bind = fusion.fuse;
 
@@ -265,7 +289,7 @@
 	fusion.defuse = function( eventName, handler, priority ) {
 
 		if( !fusion.events.has( eventName ) ) {
-			throw Error( "Fused event does not exist." );
+			throw Error( "Fused event '" + eventName + "' does not exist." );
 		}
 
 		if( priority === null || priority === undefined ) {
@@ -283,28 +307,32 @@
 	 * @param eventName
 	 * @param event
 	 */
-	fusion.ignite = function( eventName, event, context ) {
-		var events = fusion.fused.all( eventName ), eventClass, i;
+	fusion.ignite = function( eventName, event ) {
+		var events = fusion.fused.all( eventName ), eventClass, i, eventResult;
+
+		if( !fusion.events.has( eventName ) ) {
+			throw Error( "Fused event '" + eventName + "' does not exist." );
+		}
+
+		eventClass = fusion.events.get( eventName );
+		if( !eventClass.isValidEvent ) {
+			throw Error( "Fused event '" + eventName + "' does not have a valid event class." );
+		}
+
+		eventClass.initialize( event );
+
 		for( i in events ) {
-			if( !fusion.events.has( eventName ) ) {
-				throw new Error( eventName + " is not a valid event." );
-			}
+			eventClass.context = events[ i ].context;
 
-			eventClass = fusion.events.get( eventName );
+			eventResult = events[ i ].handler( eventClass, events[ i ].context );
 
-			eventClass.initialize( event );
-			eventClass.context = context || eventClass;
-
-			if( !eventClass.isValidEvent ) {
-				throw new Error( eventName + " is not a valid event class." );
-			}
-
-			if( false === events[ i ].handler( eventClass, context ) ) {
-				return false;
+			if( false === eventResult || eventClass.isPropagationStopped() ) {
+				eventClass.stopPropagation();
+				return eventClass;
 			}
 		}
 
-		return true;
+		return eventClass;
 	};
 	fusion.trigger = fusion.ignite;
 
@@ -314,18 +342,51 @@
 }( jQuery ) );
 
 /**
- * On Ready Functions
+ * Input Events
+ *
+ * Copyright 2013 by Aaron Scherer <aequasi@gmail.com>
  */
 ( function( fusion ) {
-	$( function() {
-		fusion.ignite( 'DOCUMENT_LOAD', { window: window } );
-		$( document ).unload( function() {
-			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window } );
-		} )
-	} );
-} )( $.fn.fusion );
 
-/**
+	var func = fusion.event.extend( {
+		input: null
+	} );
+
+	fusion.events.add( 'INPUT_BLUR', func );
+	fusion.events.add( 'INPUT_FOCUS', func );
+	fusion.events.add( 'INPUT_CHANGE', func );
+
+
+	func = fusion.event.extend( {
+		input: null,
+		key: null
+	} );
+	fusion.events.add( 'INPUT_KEYUP', func );
+	fusion.events.add( 'INPUT_KEYDOWN', func );
+
+
+	/**
+	 * Triggers
+	 */
+	$( function() {
+		$( document ).on( 'blur', ':input', function() {
+			fusion.ignite( 'INPUT_BLUR', { input: this } );
+		} );
+		$( document ).on( 'focus', ':input', function() {
+			fusion.ignite( 'INPUT_FOCUS', { input: this } );
+		} );
+		$( document ).on( 'change', ':input', function() {
+			fusion.ignite( 'INPUT_CHANGE', { input: this } );
+		} );
+		$( document ).on( 'keyup', ':input', function( event ) {
+			fusion.ignite( 'INPUT_KEYUP', { input: this, key: ( typeof event.which == "number" ) ? event.which : event.keyCode } );
+		} );
+		$( document ).on( 'keydown', ':input', function( event ) {
+			fusion.ignite( 'INPUT_KEYDOWN', { input: this, key: ( typeof event.which == "number" ) ? event.which : event.keyCode } );
+		} );
+	} );
+
+})( $.fn.fusion );/**
  * Document Events
  *
  * Copyright 2013 by Aaron Scherer <aequasi@gmail.com>
@@ -340,6 +401,16 @@
 	fusion.events.add( 'DOCUMENT_LOAD', func );
 	fusion.events.add( 'DOCUMENT_UNLOAD', func );
 
+
+	/**
+	 * Triggers
+	 */
+	$( function() {
+		fusion.ignite( 'DOCUMENT_LOAD', { window: window, document: document } );
+		$( document ).unload( function() {
+			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window, document: document } );
+		} )
+	} );
 
 })( $.fn.fusion );
 

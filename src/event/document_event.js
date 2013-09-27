@@ -14,4 +14,14 @@
 	fusion.events.add( 'DOCUMENT_UNLOAD', func );
 
 
+	/**
+	 * Triggers
+	 */
+	$( function() {
+		fusion.ignite( 'DOCUMENT_LOAD', { window: window, document: document } );
+		$( document ).unload( function() {
+			fusion.ignite( 'DOCUMENT_UNLOAD', { window: window, document: document } );
+		} )
+	} );
+
 })( $.fn.fusion );
