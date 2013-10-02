@@ -270,6 +270,9 @@
 		if( priority === null || priority === undefined ) {
 			priority = 50;
 		}
+		if( context === undefined ) {
+			context = arguments.callee.caller;
+		}
 
 		fusion.fused.add( eventName, handler, priority, context );
 	};
