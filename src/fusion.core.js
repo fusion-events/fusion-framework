@@ -86,6 +86,8 @@
 		}
 
 		fusion.event.__proto__.initialize = function() {
+			this.propagationStopped = false;
+
 			for( var arg in arguments[ 0 ] ) {
 				if( this.prototype[ arg ] !== undefined ) {
 					this.data[ arg ] = arguments[ 0 ][ arg ];
@@ -126,9 +128,6 @@
 			}
 			if( priority === undefined ) {
 				throw Error( "priority must be defined." );
-			}
-			if( context === undefined ) {
-				throw Error( "context must be defined." );
 			}
 
 			this.collection.push( {
@@ -271,9 +270,6 @@
 		if( priority === null || priority === undefined ) {
 			priority = 50;
 		}
-		if( context === undefined ) {
-			context = handler;
-		}
 
 		fusion.fused.add( eventName, handler, priority, context );
 	};
@@ -308,7 +304,7 @@
 	 * @param event
 	 */
 	fusion.ignite = function( eventName, event ) {
-		var events = fusion.fused.all( eventName ), eventClass, i, eventResult;
+		var events = fusion.fused.all( eventName ), eventClass, i, eventResult, handler, context;
 
 		if( !fusion.events.has( eventName ) ) {
 			throw Error( "Fused event '" + eventName + "' does not exist." );
@@ -322,9 +318,14 @@
 		eventClass.initialize( event );
 
 		for( i in events ) {
-			eventClass.context = events[ i ].context;
+			handler = events[ i ].handler;
+			context = events[ i ].context;
+			if( context === undefined ) {
+				eventResult = handler( eventClass );
+			} else {
+				eventResult = $.proxy( handler, context, eventClass );
+			}
 
-			eventResult = events[ i ].handler( eventClass, events[ i ].context );
 
 			if( false === eventResult || eventClass.isPropagationStopped() ) {
 				eventClass.stopPropagation();
