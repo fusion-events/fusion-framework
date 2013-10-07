@@ -131,11 +131,11 @@
 			}
 
 			this.collection.push( {
-				                      name:     eventName,
-				                      priority: priority,
-				                      handler:  handler,
-				                      context:  context
-			                      } );
+				name:     eventName,
+				priority: priority,
+				handler:  handler,
+				context:  context
+			} );
 
 			return this;
 		};
@@ -270,9 +270,6 @@
 		if( priority === null || priority === undefined ) {
 			priority = 50;
 		}
-		if( context === undefined ) {
-			context = arguments.callee.caller;
-		}
 
 		fusion.fused.add( eventName, handler, priority, context );
 	};
@@ -323,10 +320,10 @@
 		for( i in events ) {
 			handler = events[ i ].handler;
 			context = events[ i ].context;
-			if( context === undefined ) {
-				eventResult = handler( eventClass );
+			if( context !== undefined ) {
+				eventResult = jQuery.proxy( handler, context, eventClass )();
 			} else {
-				eventResult = $.proxy( handler, context, eventClass );
+				eventResult = handler( eventClass );
 			}
 
 
@@ -344,6 +341,7 @@
 	window.$f = ( window.$f === undefined ) ? $.fn.fusion : window.$f;
 
 }( jQuery ) );
+
 
 /**
  * Input Events
