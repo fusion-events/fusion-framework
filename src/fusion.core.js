@@ -8,7 +8,7 @@
 ( function( $ ) {
 	var ctor = function() {},
 		fusion = {
-			version: '1.0.0'
+			version: '1.3.2'
 		},
 		/**
 		 *
@@ -60,7 +60,7 @@
 		/**
 		 * @constructor
 		 */
-		ctor = function() {
+		var ctor = function() {
 			this.data = {};
 
 			for( var arg in arguments[ 0 ] ) {
@@ -73,19 +73,18 @@
 
 		};
 
-		fusion.event = new ctor();
 
-		fusion.event.__proto__.stopPropagation = function() {
+		ctor.prototype.stopPropagation = function() {
 			this.propagationStopped = true;
 
 			return false;
 		};
 
-		fusion.event.__proto__.isPropagationStopped = function() {
+		ctor.prototype.isPropagationStopped = function() {
 			return this.propagationStopped;
 		}
 
-		fusion.event.__proto__.initialize = function() {
+		ctor.prototype.initialize = function() {
 			this.propagationStopped = false;
 
 			for( var arg in arguments[ 0 ] ) {
@@ -95,11 +94,12 @@
 			}
 		};
 
-		fusion.event.__proto__.getData = function( key ) {
+		ctor.prototype.getData = function( key ) {
 			return key === undefined ? this.data : this.data[ key ];
 		};
 
-		fusion.event.extend = extendThis;
+		ctor.prototype.extend = extendThis;
+		fusion.event = new ctor();
 	})( fusion );
 
 	/**
@@ -110,8 +110,6 @@
 			this.collection = [];
 		};
 
-		fusion.fused = new ctor();
-
 		/**
 		 *
 		 * @param eventName
@@ -119,7 +117,7 @@
 		 * @param priority
 		 * @returns {fusion.fused}
 		 */
-		fusion.fused.__proto__.add = function( eventName, handler, priority, context ) {
+		ctor.prototype.add = function( eventName, handler, priority, context ) {
 			if( eventName === undefined ) {
 				throw Error( "eventName must be defined." );
 			}
@@ -147,7 +145,7 @@
 		 * @param [priority]
 		 * @returns {boolean}
 		 */
-		fusion.fused.__proto__.remove = function( eventName, handler, priority, context ) {
+		ctor.prototype.remove = function( eventName, handler, priority, context ) {
 			/**
 			 * @type {Array}
 			 */
@@ -180,7 +178,7 @@
 		 * @param eventName
 		 * @returns {Array}
 		 */
-		fusion.fused.__proto__.all = function( eventName ) {
+		ctor.prototype.all = function( eventName ) {
 			if( eventName === undefined ) {
 				throw Error( "eventName must be defined." );
 			}
@@ -202,6 +200,8 @@
 
 			return returnCollection;
 		};
+
+		fusion.fused = new ctor();
 	})( fusion );
 
 	/**
@@ -212,15 +212,13 @@
 			this.collection = [];
 		};
 
-		fusion.events = new ctor();
-
 		/**
 		 *
 		 * @param eventName
 		 * @param [eventClass={}]
 		 * @returns {fusion.events}
 		 */
-		fusion.events.__proto__.add = function( eventName, eventClass ) {
+		ctor.prototype.add = function( eventName, eventClass ) {
 			if( this.collection[ eventName ] !== undefined ) {
 				throw Error( "Event with name '" + eventName + "' already exists!" );
 			}
@@ -236,7 +234,7 @@
 		 * @param eventName
 		 * @returns {boolean}
 		 */
-		fusion.events.__proto__.has = function( eventName ) {
+		ctor.prototype.has = function( eventName ) {
 			return this.collection[ eventName ] !== undefined;
 		};
 
@@ -245,9 +243,11 @@
 		 * @param eventName
 		 * @returns {*}
 		 */
-		fusion.events.__proto__.get = function( eventName ) {
+		ctor.prototype.get = function( eventName ) {
 			return this.collection[ eventName ];
 		};
+
+		fusion.events = new ctor();
 
 
 	})( fusion );
@@ -318,6 +318,8 @@
 		eventClass.initialize( event );
 
 		for( i in events ) {
+			if( !events.hasOwnProperty( i ) ) continue;
+
 			handler = events[ i ].handler;
 			context = events[ i ].context;
 			if( context !== undefined ) {
