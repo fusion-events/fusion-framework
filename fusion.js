@@ -8,7 +8,7 @@
 ( function( $ ) {
 	var ctor = function() {},
 		fusion = {
-			version: '1.3.3'
+			version: '1.3.4'
 		},
 		/**
 		 *
@@ -362,15 +362,15 @@
 	fusion.events.add( 'INPUT_FOCUS_OUT', func );
 	fusion.events.add( 'INPUT_CHANGE', func );
 	fusion.events.add( 'INPUT_CLICK', func );
-	fusion.events.add( 'INPUT_DOUBLE_CLICK', func );
+	//fusion.events.add( 'INPUT_DOUBLE_CLICK', func );
 	fusion.events.add( 'INPUT_HOVER', func );
-	fusion.events.add( 'INPUT_MOUSE_DOWN', func );
-	fusion.events.add( 'INPUT_MOUSE_ENTER', func );
-	fusion.events.add( 'INPUT_MOUSE_LEAVE', func );
-	fusion.events.add( 'INPUT_MOUSE_MOVE', func );
-	fusion.events.add( 'INPUT_MOUSE_OUT', func );
-	fusion.events.add( 'INPUT_MOUSE_OVER', func );
-	fusion.events.add( 'INPUT_MOUSE_UP', func );
+	//fusion.events.add( 'INPUT_MOUSE_DOWN', func );
+	//fusion.events.add( 'INPUT_MOUSE_ENTER', func );
+	//fusion.events.add( 'INPUT_MOUSE_LEAVE', func );
+	//fusion.events.add( 'INPUT_MOUSE_MOVE', func );
+	//fusion.events.add( 'INPUT_MOUSE_OUT', func );
+	//fusion.events.add( 'INPUT_MOUSE_OVER', func );
+	//fusion.events.add( 'INPUT_MOUSE_UP', func );
 
 
 	func = fusion.event.extend( {
@@ -404,13 +404,13 @@
 		$( document ).on( 'click', ':input', function() {
 			fusion.ignite( 'INPUT_CLICK', { input: this } );
 		} );
-		$( document ).on( 'dblclick', ':input', function() {
+		/*$( document ).on( 'dblclick', ':input', function() {
 			fusion.ignite( 'INPUT_DOUBLE_CLICK', { input: this } );
-		} );
+		} );*/
 		$( document ).on( 'hover', ':input', function() {
 			fusion.ignite( 'INPUT_HOVER', { input: this } );
 		} );
-		$( document ).on( 'mousedown', ':input', function() {
+		/*$( document ).on( 'mousedown', ':input', function() {
 			fusion.ignite( 'INPUT_MOUSE_DOWN', { input: this } );
 		} );
 		$( document ).on( 'mouseenter', ':input', function() {
@@ -430,7 +430,7 @@
 		} );
 		$( document ).on( 'mouseup', ':input', function() {
 			fusion.ignite( 'INPUT_MOUSE_UP', { input: this } );
-		} );
+		} );*/
 
 
 		$( document ).on( 'keypress', ':input', function( event ) {

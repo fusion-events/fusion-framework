@@ -8,7 +8,7 @@
 ( function( $ ) {
 	var ctor = function() {},
 		fusion = {
-			version: '1.3.3'
+			version: '1.3.4'
 		},
 		/**
 		 *
