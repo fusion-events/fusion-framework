@@ -6,9 +6,10 @@
  * Copyright 2013 by Aaron Scherer <aequasi@gmail.com>
  */
 ( function( $ ) {
-	var ctor = function() {},
+	var
+		ctor = function() {},
 		fusion = {
-			version: '1.3.5'
+			version: '1.3.6'
 		},
 		/**
 		 *
@@ -17,7 +18,7 @@
 		 * @param staticProps
 		 * @returns {jQuery.extend|*}
 		 */
-			inherits = function( parent, protoProps, staticProps ) {
+		inherits = function( parent, protoProps, staticProps ) {
 			var child;
 			if( protoProps && protoProps.hasOwnProperty( 'constructor' ) ) {
 				child = protoProps.constructor;
@@ -45,11 +46,12 @@
 		 * @param staticProps
 		 * @returns {jQuery.extend|*}
 		 */
-			extendThis = function( protoProps, staticProps ) {
+		extendThis = function( protoProps, staticProps ) {
 			var child = inherits( this, protoProps, staticProps );
 			child.extend = extendThis;
 			return child;
-		};
+		}
+	;
 
 	/************************* Models *********************************/
 
@@ -61,7 +63,7 @@
 		 * @constructor
 		 */
 		var ctor = function() {
-			this.data = {};
+			this.data = { options: {} };
 
 			for( var arg in arguments[ 0 ] ) {
 				this.data[ arg ] = arguments[ 0 ][ arg ];
@@ -70,7 +72,6 @@
 			this.name = null
 			this.isValidEvent = true;
 			this.propagationStopped = false;
-
 		};
 
 
