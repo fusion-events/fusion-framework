@@ -98,3 +98,7 @@ Contributions
 
 If you would like to help with contributing, please do! Just fork this code, make your changes and put in a pull request.
 I would love for this framework to work with element bound events, but I don't have enough time to figure that out.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fusion-events/fusion-framework/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
